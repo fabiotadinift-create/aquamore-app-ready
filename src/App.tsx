@@ -1,6 +1,8 @@
 import React, { useMemo, useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import Allenamenti from "./Allenamenti";
+
 
 /**
  * Aquamore – Allenamento Builder (Planner + Autosave)
@@ -642,6 +644,8 @@ export default function App() {
               </div>
             );
           })}
+          {/* 👇 nuova sezione collegata a Google Sheet */}
+          <Allenamenti />
         </div>
 
         {/* Editor header */}
