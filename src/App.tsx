@@ -599,54 +599,57 @@ export default function App() {
           <div />
         </div>
 
-        {/* Week grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-7 gap-2 mb-6">
-          {week.map((d) => {
-            const key = dateKey(d);
-            const data = loadAll()[key];
-            const scen = data ? computeScenarioForData(data) : null;
-            const isSel = dateKey(currentDate) === key;
-            return (
+                {week.map((d) => {
+          const key = dateKey(d);
+          const data = loadAll()[key];
+          const scen = data ? computeScenarioForData(data) : null;
+          const isSel = dateKey(currentDate) === key;
+          return (
+            <div
+              key={key}
+              onClick={() => setCurrentDate(d)}
+              className={`cursor-pointer border rounded-xl p-2 bg-white hover:bg-gray-50 ${isSel ? "ring-2 ring-blue-500" : ""}`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="font-medium text-sm">
+                  {weekdayLabel(d)} {pad2(d.getDate())}/{pad2(d.getMonth() + 1)}
+                </div>
+                {isSel && (
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100">
+                    sel.
+                  </span>
+                )}
+              </div>
               <div
-                key={key}
-                onClick={() => setCurrentDate(d)}
-                className={`cursor-pointer border rounded-xl p-2 bg-white hover:bg-gray-50 ${isSel ? "ring-2 ring-blue-500" : ""}`}
+                className="text-xs text-gray-600 mt-1 truncate"
+                title={data?.title || "(vuoto)"}
               >
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-sm">
-                    {weekdayLabel(d)} {pad2(d.getDate())}/{pad2(d.getMonth() + 1)}
-                  </div>
-                  {isSel && (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100">
-                      sel.
-                    </span>
-                  )}
-                </div>
-                <div
-                  className="text-xs text-gray-600 mt-1 truncate"
-                  title={data?.title || "(vuoto)"}
-                >
-                  {data?.title || "(vuoto)"}
-                </div>
-                {/* volumi a destra, uno sotto l'altro */}
-                <div className="mt-1 flex justify-end">
-                  <div className="text-[11px] text-right leading-tight">
-                    {(["Velocisti","Mezzofondo","Salvamento"] as const).map((g) => (
-                      <div key={g}>
-                        {g.slice(0, 3)}:{" "}
-                        <span className="font-semibold">
-                          {scen ? (scen.perGroup[g]?.total || 0).toLocaleString() : 0}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                {data?.title || "(vuoto)"}
+              </div>
+              {/* volumi a destra, uno sotto l'altro */}
+              <div className="mt-1 flex justify-end">
+                <div className="text-[11px] text-right leading-tight">
+                  {(["Velocisti","Mezzofondo","Salvamento"] as const).map((g) => (
+                    <div key={g}>
+                      {g.slice(0, 3)}:{" "}
+                      <span className="font-semibold">
+                        {scen ? (scen.perGroup[g]?.total || 0).toLocaleString() : 0}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            );
-          })}
-          {/* 👇 nuova sezione collegata a Google Sheet */}
-          <Allenamenti />
-        </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 👇 nuova sezione collegata a Google Sheet */}
+      <Allenamenti />
+    </div>
+  );
+}
+
 
         {/* Editor header */}
         <div className="flex items-center justify-between mb-4">
