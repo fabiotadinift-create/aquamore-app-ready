@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import Allenamenti from "./Allenamenti";
+//import Allenamenti from "./Allenamenti";
 
 
 /**
@@ -675,7 +675,7 @@ export default function App() {
             );
           })}
           {/* 👇 nuova sezione collegata a Google Sheet */}
-          <Allenamenti />
+          { <Allenamenti />}
         </div>
 
         {/* Editor header */}
