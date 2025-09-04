@@ -112,6 +112,33 @@ function detectEquipment(txt: string) {
 }
 
 // ============ Parser & aggregatori ============
+// Supporto leggero per SERIE NIDIFICATE del tipo: 3x(200 @3:00 4x50 misti @1:00)
+// Espandiamo le parentesi replicando il contenuto interno N volte e separiamo i set con newline.
+function normalizeInner(inner: string) {
+  return String(inner || "")
+    .trim()
+    // Inserisce newline prima di ogni token che sembra l’inizio di un set ("12x50" oppure "200")
+    // Non tocca i tempi tipo "@1:00"
+    .replace(/\s+(?=(\d+\s*x\s*\d+|\d{2,4}\b))/gi, "\n");
+}
+
+function expandNestedText(txt: string) {
+  let out = String(txt || "");
+  const rx = /(\d+)\s*x\s*\(([^()]+)\)/gi; // prende le parentesi più interne
+  let prev: string;
+  do {
+    prev = out;
+    out = out.replace(rx, (_m, n: string, inner: string) => {
+      const block = normalizeInner(inner);
+      const times = Math.max(1, parseInt(n, 10) || 1);
+      // Replichiamo il contenuto interno N volte, separato da newline
+      return Array.from({ length: times }, () => block).join("\n");
+    });
+  } while (out !== prev);
+  return out;
+}
+
+
 type Parsed = {
   line: string;
   meters: number;
@@ -194,7 +221,10 @@ const sumZones = (...objs: any[]) => {
   return z;
 };
 const parseText = (txt: string) =>
-  String(txt || "").split(/\n+/).map(parseLine).filter(Boolean) as Parsed[];
+  String(expandNestedText(txt))
+    .split(/\n+/)
+    .map(parseLine)
+    .filter(Boolean) as Parsed[];
 const aggText = (txt: string, pace100: number, restPct: number) =>
   aggregate(parseText(txt), pace100, restPct / 100);
 
